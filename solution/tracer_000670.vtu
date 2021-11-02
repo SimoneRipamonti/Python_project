@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+<!--This file was created by meshio v5.0.2-->
+<UnstructuredGrid>
+<Piece NumberOfPoints="101" NumberOfCells="100">
+<Points>
+<DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary">
+AQAAAACAAAB4CQAAnwEAAA==eJx10zssw1EYhnFzZ9Zamc0YWZk7s9Zaq841WBgs7WJpIpGoRAQlLilxrzt1p3VZatZz3vHxnvFHes75zvNva/t/jbcXB2qZif7/fQpeSmbrQ6VZ8/8F+Mx0WHPmd4rwxlD4y7z5/QV4oppP9yYWzb5L8O5Ubr3ZtWzOswIvtH69ml8151yD98RVNuffgJebXa0TbZp7bcGH40G3zX134LVM2HjXzKECHwvXTe+Z+ezDtQ7M3OiD8UCHZp70cMpU7sjM+Rgex1ala/4n8M5wreSpeRf66EhYZ+a9qvCwa3uRrnc8h/+GbZt0ve8FvC9ufGnenR6vm70yPVzD9yph0dXJDbwjXvjW9EOP26buTFf3Zm509UbXPOnqsGbmTFefdM3/wXRL17Z09fxo3ouu3Oh6xyfTP13vS9d38Wzena7vha4eXsx3RFcndH1fr6Yfur47utab6Yqurujqiq6u3k1XdHVFV1cf8MnYFV1d0dVV3XRFV1d0ddUwXdHVFV1dfZqu6OqKrq6+TFd0dUVXV9+mK7q6omv9wP8AAPWMng==
+</DataArray>
+</Points>
+<Cells>
+<DataArray type="Int64" Name="connectivity" format="binary">
+AQAAAACAAABABgAA3gAAAA==eJx1yNlWAQAUhWFDUUkpMqSRSCiVoVCJiEqRMjeh938GF46bf62zb771b4NhNiM0QTNcgIvQIlqVXoLLcAXa4KpoV3oNrkMH3ICbolNpF9yCbugRvWgf/nlvQz/cgbtwT9xX+gAewgAMwiMxpHQYHsMIPIFRMaZ0HJ7CM5iA5/BCvFQ6CVMwDTPwSrxWOgtzMA9v4K14p3QB3sMiLMEHsax0BT7CKqzBJ/EZ/YJ/3nX4Ct9gAzbFd6Vb8AN+wjbsiF2le7APB3AIv8RvpX/gL/yDIziGE/gvTgEIpicR
+</DataArray>
+<DataArray type="Int64" Name="offsets" format="binary">
+AQAAAACAAAAgAwAAxwAAAA==eJwtxdFGAwAAAMAkmUwymUySSZIkmWQySZJJkiQzmSTJJEmSTJKZZJJJkkmSmSRJkkkm6bN62N3LNTc1tLjVAbc56HZ3OOROh93liLvd415H3ed+D3jQQx72iEcd85jHHfeEE570lKc941knPed5L3jRS172ilNOe9UZr3ndG970lrPe9o53ved9H/jQR8752Cc+dd4Fn/ncRV/40iVf+do3vnXZd773gx9dcdVPfvaLX/3md3/40zV/+dt1//jXf/4H8McndQ==
+</DataArray>
+<DataArray type="Int64" Name="types" format="binary">
+AQAAAACAAAAgAwAAEwAAAA==eJxjZoAA5lF6lB6lMWgA3J8BLQ==
+</DataArray>
+</Cells>
+<CellData>
+<DataArray type="Float64" Name="tracer" format="binary">
+AQAAAACAAAAgAwAArQIAAA==eJxjYBjcYKPIyhnXbk60fPNXcDEz91fLL0/0fEyOeVhNnyI3pyF7stXESZ8vqZy7ZsX9zbP9QKqo9ZZJuzPmbA2w3i7TaGAb3ma96lCtcJvULmvpxUfd7gq/tvaOfqVQYi9pw56l/UIowdWm3lrQr35igU29kIG7yrrpNlbeL302Je+3OfqvVe92ymMb6ytXW08WsNmKW/7eeC1Dw/bR7MKsP9yetjt+PnrzMDDDVsG/NzMko83WLVjU48HixbbbDsi/fph5wHa39J2COLNbtvFZyzyDOb/Y3vG/vex8PK+djIGKYe86Fbvfhw/d/MJsYxf9W87N0T3IruXNtY0JjOl291tsakK+Vdv19zNN/ZE7wU5/Se7h2esX2fmUXfV7Pm2LXdOPj+kcDMfsVpr7fv5y4Zqdj6gAX92fZ3amR9ds7Wj+Zidfo8nkX8Jqz9pScuz1c2H7J+aCjrv/Kdr3qhVcq9+hb8/mwHEkz83a/vLCvfPOP3Gz55/K9frdkSD7SwG/Fk8RjrP/yL4hRXJCuv3mNM5pZvxF9j0Zfh8LJartL0jZz5r4vNleVGK3T+myHvsJvklrpptOsedzjmye+WW2/Uebi0EZ3xfZP/q5N1TGcaW9vcADB5/GDfYWlzb4depvtb+87Q/n7G277K/y5q1b3HPA/lzO/N831I/Ymy55/PaB0gn7IkHjELncM/YmD5+e3lR+wb4rMNzK6dgl+xkp1y9qCl61733wMn2J63X7V1e/JFsE3LT/MmNf1zXZ2/ZXHoUlMM+9Yx+jJ7fj47679raxch2lFffss8TSEnceume/RY9r3bLZ9+w1tjwN+cF6z77w9I+t3znu2j9PUBR+s/62/UfbYwXenLfs2f0fMB1UvWEfvjz0prz4Nfvkpz79Ee8v2wMAWBQy2g==
+</DataArray>
+<DataArray type="Int64" Name="grid_dim" format="binary">
+AQAAAACAAAAgAwAAEwAAAA==eJxjZIAAxlF6lB6lMWgAoPAAZQ==
+</DataArray>
+<DataArray type="Int64" Name="cell_id" format="binary">
+AQAAAACAAAAgAwAArwAAAA==eJwtxdciAgAAAMCQWSFbJCuzsjNDiuyMyo7y///gwd3LBQL/WtzqNgfd7g53usvd7nHIYUfc6z73O+oBD3rIwx7xqMc87pgnPOm4p5zwtGc86znPO+kFL3rJy17xqlNOO+M1r3vDm97ytnec9a73vO8DH/rIOR/7xKfO+8wFF33uC5d86Stf+8a3vvO9y37wo5/87IqrrvnFr37zuz/86S/X/e0fN9z0r/8AXBwTVw==
+</DataArray>
+</CellData>
+</Piece>
+</UnstructuredGrid>
+</VTKFile>
