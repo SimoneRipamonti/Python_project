@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[6]:
+# In[1]:
 
 
 import numpy as np
@@ -34,7 +34,7 @@ data={"temperature":423,
        "ph":3.5}
 
 
-# In[4]:
+# In[6]:
 
 
 class Reaction:
@@ -45,8 +45,8 @@ class Reaction:
         self.data=pp.initialize_data(g, {}, 'reaction', parameters)
         self.const_rate=None
         
-    def get_const_rate(self):
-        data=self.data[pp.PARAMETERS]["reagent"]
+    def set_const_rate(self):
+        data=self.data[pp.PARAMETERS]["reaction"]
         A=data["A"]
         const=data["rate_const"]
         E=data["E"]
@@ -57,23 +57,27 @@ class Reaction:
         
     
     def compute_rd(self,past_sol):
-        data=self.data[pp.PARAMETERS]["reagent"]
+        data=self.data[pp.PARAMETERS]["reaction"]
         ph=data["ph"]
         phi=data["mass_weight"]
         K_eq=data["K_eq"]
+        h=0.01
+        Nx=100
         p=np.power(past_sol,2)/(K_eq*math.pow(10,-2*ph))
+        rhs=np.zeros(Nx)
         for i in range(Nx):
-            rhs[i]=h*phi[i]*max(self.const_rate*(1.0-p[i]),0.0)
+            #rhs[i]=h*phi*max(self.const_rate*(1.0-p[i]),0.0)
+            rhs[i]=h*max(self.const_rate*(1.0-p[i]),0.0)
             return rhs
     
         
         
 
 
-# In[5]:
+# In[7]:
 
 
-
+reaction=Reaction(g,data)
 
 
 # In[ ]:
