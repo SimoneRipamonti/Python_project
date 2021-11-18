@@ -34,7 +34,7 @@ data={"temperature":423,
        "ph":3.5}
 
 
-# In[6]:
+# In[4]:
 
 
 class Reaction:
@@ -56,28 +56,44 @@ class Reaction:
         self.const_rate=A*const*math.exp(-E/(R*temperature))
         
     
-    def compute_rd(self,past_sol):
+    def compute_rd(self,past_sol,h,Nx):
         data=self.data[pp.PARAMETERS]["reaction"]
         ph=data["ph"]
         phi=data["mass_weight"]
         K_eq=data["K_eq"]
-        h=0.01
-        Nx=100
         p=np.power(past_sol,2)/(K_eq*math.pow(10,-2*ph))
         rhs=np.zeros(Nx)
         for i in range(Nx):
             #rhs[i]=h*phi*max(self.const_rate*(1.0-p[i]),0.0)
             rhs[i]=h*max(self.const_rate*(1.0-p[i]),0.0)
-            return rhs
+        return rhs
     
         
         
 
 
-# In[7]:
+# In[5]:
 
 
 reaction=Reaction(g,data)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:

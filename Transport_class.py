@@ -14,7 +14,7 @@ import porepy as pp
 
 Nx=100
 #Ny=10
-phys_dims=[1]
+phys_dims=[1.0]
 #phys_dims=[1,1]
 #g=pp.CartGrid([Nx,Ny],phys_dims)
 g=pp.CartGrid([Nx],phys_dims)
@@ -29,7 +29,7 @@ empty = np.empty(0)
 porosity=unity
 aperture=1
 bc_type=["dir","dir"]
-bc_value=[0.,1.]
+bc_value=[0.,0.]
 init_cond=lambda x,y,z:int(x<0.5)
 
 
@@ -43,7 +43,7 @@ specified_parameters = {
             "mass_weight": porosity * aperture,
             "darcy_flux":np.ones(Nx+1),
             "t_max": 1.0,
-            "method": "Explicit",
+            "method": "Implicit",
             "lambda_lin_decay":0,
             "initial_cond":init_cond,
 }
@@ -118,7 +118,7 @@ class Transport:
         dt=data["time_step"]
         decay=data["lambda_lin_decay"]
         
-        if data=="Explicit":
+        if data["method"]=="Explicit":
             lhs =1/dt*A_mass
             rhs_matrix=1/dt*A_mass-A_upwind-decay*A_mass
         else:
@@ -268,12 +268,14 @@ def solve(self,save_every,tracer):
             if np.isclose(i % save_every, 0):
                 # Export existing solution (final export is taken care of below)
                 exporter.write_vtu({"tracer":tracer}, time_step=int(i // save_every))
+                print(tracer)
                 if self.data[pp.PARAMETERS]["transport"]["method"]=="Explicit":
                     tracer = IEsolver((1/dt*A_mass-A_upwind-decay*A_mass)*tracer+rhs)
                 else:
                     tracer = IEsolver((1/dt*A_mass-decay*A_mass) * tracer + rhs)
         
         exporter.write_vtu({"tracer":tracer}, time_step=(n_steps // save_every))
+        print(tracer)
         time_steps = np.arange(0,self.data[pp.PARAMETERS]["transport"]["t_max"] + self.data[pp.PARAMETERS]["transport"]["time_step"], save_every * self.data[pp.PARAMETERS]["transport"]["time_step"])
         exporter.write_pvd(time_steps)        
 
