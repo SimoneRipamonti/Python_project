@@ -43,7 +43,7 @@ specified_parameters = {
             "mass_weight": porosity * aperture,
             "darcy_flux":np.ones(Nx+1),
             "t_max": 1.0,
-            "method": "Implicit",
+            "method": "Explicit",
             "lambda_lin_decay":0,
             "initial_cond":init_cond,
 }
@@ -129,7 +129,12 @@ class Transport:
         
         
         return lhs,rhs_b,rhs_matrix
-        
+    
+    def set_and_get_matrices(self,tracer):
+        self.set_bc()
+        self.set_initial_cond(tracer)
+        tracer_lhs,tracer_rhs_b,tracer_rhs_matrix=self.get_transport_lhs_rhs()
+        return tracer_lhs,tracer_rhs_b,tracer_rhs_matrix
 
 
 # In[6]:
@@ -137,12 +142,23 @@ class Transport:
 
 tracer=np.zeros(g.num_cells)
 transport=Transport(g,specified_parameters)
-transport.set_bc()
-transport.set_initial_cond(tracer)
-lhs,rhs_b,rhs_matrix=transport.get_transport_lhs_rhs()
+#transport.set_bc()
+#transport.set_initial_cond(tracer)
+#lhs,rhs_b,rhs_matrix=transport.get_transport_lhs_rhs()
+lhs,rhs_b,rhs_matrix=transport.set_and_get_matrices(tracer)
 
 
 # In[7]:
+
+
+#tracer=np.zeros(g.num_cells)
+#transport=Transport(g,specified_parameters)
+#transport.set_bc()
+#transport.set_initial_cond(tracer)
+#lhs,rhs_b,rhs_matrix=transport.get_transport_lhs_rhs()
+
+
+# In[8]:
 
 
 IEsolver = sps.linalg.factorized(lhs)
@@ -163,10 +179,16 @@ for i in range(n_steps):
             tracer = IEsolver(rhs_matrix*tracer+rhs_b)
         else:
             tracer = IEsolver(rhs_matrix*tracer+rhs_b)
-        
+
 exporter.write_vtu({"tracer":tracer}, time_step=(n_steps // save_every))
 time_steps = np.arange(0,data_transport["t_max"] + data_transport["time_step"], save_every * data_transport["time_step"])
 exporter.write_pvd(time_steps)        
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
