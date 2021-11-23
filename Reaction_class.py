@@ -68,6 +68,24 @@ class Reaction:
             rhs[i]=h*max(self.const_rate*(1.0-p[i]),0.0)
         return rhs
     
+    def compute_rd_6_reagents(self,Ca,SiO2,H_piu,CaSiO3,rd):
+        data=self.data[pp.PARAMETERS]["reaction"]
+        porosity=data["porosity"]
+        kd=data["kd"]
+        K_sol=data["K_sol"]
+        omega=np.zeros(rd.size)
+        for i in range(rd.size):
+            omega[i]=Ca[i]*SiO2[i]/(H_piu[i]*H_piu[i])
+            omega/=K_sol
+            rd[i]=porosity[i]*kd*max((1-omega[i]),0.0)*CaSiO3[i]
+        return rd
+    
+    
+            
+            
+            
+        
+        
         
         
 
@@ -76,6 +94,18 @@ class Reaction:
 
 
 reaction=Reaction(g,data)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:

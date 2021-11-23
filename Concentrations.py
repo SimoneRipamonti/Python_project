@@ -13,19 +13,20 @@ import porepy as pp
 
 
 class Concentrations:
-    def __init__(self,Nx,Nt,parameters=None):
+    def __init__(self,g,Nx,Nt,parameters=None):
         
         if not parameters:
             parameters={}
+        self.g=g
         self.Nx=Nx
         self.Nt=Nt
-        self.Ca=np.zeros((Nx,Nt))
-        self.CaSiO3=np.zeros((Nx,Nt))
-        self.CO2=np.zeros((Nx,Nt))
-        self.H_piu=zeors((Nx,Nt))
-        self.SiO2=zeros((Nx,Nt))
-        self.HCO3=zeros((Nx,Nt))
-        self.data=pp.initialize_data(g, {}, "6reagents", parameters)
+        self.Ca=np.zeros((Nx,Nt+1))
+        self.CaSiO3=np.zeros((Nx,Nt+1))
+        self.CO2=np.zeros((Nx,Nt+1))
+        self.H_piu=np.zeros((Nx,Nt+1))
+        self.SiO2=np.zeros((Nx,Nt+1))
+        self.HCO3=np.zeros((Nx,Nt+1))
+        self.data=pp.initialize_data(self.g, {}, "6reagents", parameters)
     
     def compute_psi(self,step,psi1,psi2,psi3,psi4,psi5):
         psi1=self.Ca[:,step]
@@ -38,13 +39,13 @@ class Concentrations:
     def set_bc_psi(self):
         data=self.data[pp.PARAMETERS]["6reagents"]
         bc_psi1=data["bc_value_Ca"]
-        bc_psi2=data["bc_value_H_piu"]-data["bc_value_HCO3"]
-        bc_psi3=data["bc_value_CO2"]+data["bc_value_HCO3"]
+        bc_psi2=np.array(data["bc_value_H_piu"])-np.array(data["bc_value_HCO3"])
+        bc_psi3=np.array(data["bc_value_CO2"])+np.array(data["bc_value_HCO3"])
         bc_psi4=data["bc_value_CaSiO3"]
         bc_psi5=data["bc_value_SiO2"]
         return bc_psi1,bc_psi2,bc_psi3,bc_psi4,bc_psi5
     
-    def set_initial_cond(self):
+    def set_initial_cond(self,K_eq):
         data_t0=self.data[pp.PARAMETERS]["6reagents"]
         Ca_0=data_t0["init_cond_Ca"]
         CO2_0=data_t0["init_cond_CO2"]
@@ -58,31 +59,31 @@ class Concentrations:
             self.CO2[:,0]=CO2_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
             self.H_piu[:,0]=H_piu_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
             self.SiO2[:,0]=SiO2_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
-            self.HCO3[:,0]=HCO3_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
+            self.HCO3[:,0]=K_eq*CO2_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])-H_piu_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
     
-    def set_solver(psi_lhs):
+    def set_solver(self,psi_lhs):
         IEsolver = sps.linalg.factorized(psi_lhs)
         return IEsolver
     
-    def transport_and_reaction(psi,psi_rhs_matrix,psi_rhs_b,rd,solver,h):
+    def transport_and_reaction(self,psi,psi_rhs_matrix,psi_rhs_b,rd,solver,h):
         psi=solver(psi_rhs_matrix*psi+psi_rhs_b+rd*h)
         return psi
     
-    def Esplicit_Euler(psi,lhs,rhs_b,rhs_matrix,rd):
+    def Explicit_Euler(self,psi,lhs,rhs_b,rhs_matrix,rd,h):
         IEsolver = sps.linalg.factorized(lhs)
         psi = IEsolver(rhs_matrix*psi+rhs_b+rd*h)
         return psi
     
-    def one_step_transport_reaction(psi1,psi2,psi3,psi4,psi5,lhs_psi1,rhs_b_psi1,rhs_matrix_psi1,
+    def one_step_transport_reaction(self,psi1,psi2,psi3,psi4,psi5,lhs_psi1,rhs_b_psi1,rhs_matrix_psi1,
                                     lhs_psi2,rhs_b_psi2,rhs_matrix_psi2,lhs_psi3,rhs_b_psi3,
                                     rhs_matrix_psi3,lhs_psi4,rhs_b_psi4,rhs_matrix_psi4,
                                     lhs_psi5,rhs_b_psi5,rhs_matrix_psi5,rd,h):
         
-        Esplicit_Euler(psi1,lhs_psi1,rhs_b_psi1,rhs_matrix_psi1,rd)
-        Esplicit_Euler(psi2,lhs_psi2,rhs_b_psi2,rhs_matrix_psi2,-2*rd)
-        Esplicit_Euler(psi3,lhs_psi3,rhs_b_psi3,rhs_matrix_psi3,np.zeros(Nx))
-        Esplicit_Euler(psi4,lhs_psi4,rhs_b_psi4,rhs_matrix_psi4,-rd)
-        Esplicit_Euler(psi5,lhs_psi5,rhs_b_psi5,rhs_matrix_psi5,rd)
+        self.Explicit_Euler(psi1,lhs_psi1,rhs_b_psi1,rhs_matrix_psi1,rd,h)
+        self.Explicit_Euler(psi2,lhs_psi2,rhs_b_psi2,rhs_matrix_psi2,-2*rd,h)
+        self.Explicit_Euler(psi3,lhs_psi3,rhs_b_psi3,rhs_matrix_psi3,np.zeros(self.Nx),h)
+        self.Explicit_Euler(psi4,lhs_psi4,rhs_b_psi4,rhs_matrix_psi4,-rd,h)
+        self.Explicit_Euler(psi5,lhs_psi5,rhs_b_psi5,rhs_matrix_psi5,rd,h)
     
     def compute_concentration(self,psi1,psi2,psi3,psi4,psi5,step,K_eq):
         old_it=np.zeros(6)
@@ -99,16 +100,16 @@ class Concentrations:
         
         max_iter=500
         tol=1e-15
-        dx=zeros(6)
-        for i in range(Nx):
-            old_it=[Ca[i,step-1],H_piu[i,step-1],HCO3[i,step-1],CO2[i,step-1],CaSiO3[i,step-1],SiO2[i,step-1]]
+        dx=np.zeros(6)
+        for i in range(self.Nx):
+            old_it=[self.Ca[i,step-1],self.H_piu[i,step-1],self.HCO3[i,step-1],self.CO2[i,step-1],self.CaSiO3[i,step-1],self.SiO2[i,step-1]]
             itera=0
             err=1
             while itera<max_iter and err>tol:
-                rhs=compute_rhs(rhs,old_it,psi1(i),psi2(i),psi3(i),psi4(i),psi5(i),K_eq)
-                Jacob=compute_Jacob(Jacob,old_it)
+                rhs=self.compute_rhs(rhs,old_it,psi1[i],psi2[i],psi3[i],psi4[i],psi5[i],K_eq)
+                Jacob=self.compute_Jacob(Jacob,old_it)
                 Jac=sps.linalg.factorized(Jacob)
-                dx=Jac.solve(-rhs)
+                dx=Jac(np.zeros(6)-rhs)
                 err=np.linalg.norm(dx)/np.linalg.norm(old_it)
                 old_it+=dx
                 itera+=1
@@ -119,7 +120,7 @@ class Concentrations:
             self.CaSiO3[i,step]=old_it[4]
             self.SiO2[i,step]=old_it[5]
     
-    def compute_rhs(rhs,old_it,psi1,psi2,psi3,psi4,psi5,K_eq):
+    def compute_rhs(self,rhs,old_it,psi1,psi2,psi3,psi4,psi5,K_eq):
         Ca=old_it[0]
         H_piu=old_it[1]
         HCO3=old_it[2]
@@ -129,12 +130,30 @@ class Concentrations:
         rhs=[Ca-psi1,H_piu-HCO3-psi2,CO2+HCO3-psi3,CaSiO3-psi4,SiO2-psi5,H_piu*HCO3-K_eq*CO2]
         return rhs
     
-    def compute_Jacob(Jacob,old_it):
+    def compute_Jacob(self,Jacob,old_it):
         HCO3=old_it[2]
         H_piu=old_it[1]
         Jacob[5,1]=HCO3
         Jacob[5,2]=H_piu
         return Jacob               
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:

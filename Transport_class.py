@@ -92,12 +92,12 @@ class Transport:
         self.data[pp.PARAMETERS]["transport"]["bc_values"]=bc_val
         self.data[pp.PARAMETERS]["transport"].pop("bc_type")
         self.data[pp.PARAMETERS]["transport"].pop("bc_value")
-        
+    
     def set_initial_cond(self,tracer):
         tracer_t0=self.data[pp.PARAMETERS]["transport"]["initial_cond"]
         for i in range(self.g.num_cells):
             tracer[i]=tracer_t0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
-    
+     
     #def set_matrices():
     def get_transport_lhs_rhs(self):
         
@@ -171,18 +171,20 @@ save_every=1
 # Exporter
 exporter = pp.Exporter(transport.g, file_name="tracer",folder_name="solution")
     
-for i in range(n_steps):
+for i in range(1,n_steps+1,1):
     if np.isclose(i % save_every, 0):
         # Export existing solution (final export is taken care of below)
         exporter.write_vtu({"tracer":tracer}, time_step=int(i // save_every))
         if data_transport["method"]=="Explicit":
             tracer = IEsolver(rhs_matrix*tracer+rhs_b)
+            #print(tracer)
         else:
             tracer = IEsolver(rhs_matrix*tracer+rhs_b)
+            #print(tracer)
 
 exporter.write_vtu({"tracer":tracer}, time_step=(n_steps // save_every))
 time_steps = np.arange(0,data_transport["t_max"] + data_transport["time_step"], save_every * data_transport["time_step"])
-exporter.write_pvd(time_steps)        
+exporter.write_pvd(time_steps)
 
 
 # In[ ]:
