@@ -59,7 +59,7 @@ class Concentrations:
             self.CO2[:,0]=CO2_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
             self.H_piu[:,0]=H_piu_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
             self.SiO2[:,0]=SiO2_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
-            self.HCO3[:,0]=K_eq*CO2_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])-H_piu_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
+            self.HCO3[:,0]=K_eq*CO2_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])/H_piu_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
     
     def set_solver(self,psi_lhs):
         IEsolver = sps.linalg.factorized(psi_lhs)
@@ -79,11 +79,12 @@ class Concentrations:
                                     rhs_matrix_psi3,lhs_psi4,rhs_b_psi4,rhs_matrix_psi4,
                                     lhs_psi5,rhs_b_psi5,rhs_matrix_psi5,rd,h):
         
-        self.Explicit_Euler(psi1,lhs_psi1,rhs_b_psi1,rhs_matrix_psi1,rd,h)
-        self.Explicit_Euler(psi2,lhs_psi2,rhs_b_psi2,rhs_matrix_psi2,-2*rd,h)
-        self.Explicit_Euler(psi3,lhs_psi3,rhs_b_psi3,rhs_matrix_psi3,np.zeros(self.Nx),h)
-        self.Explicit_Euler(psi4,lhs_psi4,rhs_b_psi4,rhs_matrix_psi4,-rd,h)
-        self.Explicit_Euler(psi5,lhs_psi5,rhs_b_psi5,rhs_matrix_psi5,rd,h)
+        psi1=self.Explicit_Euler(psi1,lhs_psi1,rhs_b_psi1,rhs_matrix_psi1,rd,h)
+        psi2=self.Explicit_Euler(psi2,lhs_psi2,rhs_b_psi2,rhs_matrix_psi2,-2*rd,h)
+        psi3=self.Explicit_Euler(psi3,lhs_psi3,rhs_b_psi3,rhs_matrix_psi3,np.zeros(self.Nx),h)
+        psi4=self.Explicit_Euler(psi4,lhs_psi4,rhs_b_psi4,rhs_matrix_psi4,-rd,h)
+        psi5=self.Explicit_Euler(psi5,lhs_psi5,rhs_b_psi5,rhs_matrix_psi5,rd,h)
+        return psi1,psi2,psi3,psi4,psi5
     
     def compute_concentration(self,psi1,psi2,psi3,psi4,psi5,step,K_eq):
         old_it=np.zeros(6)

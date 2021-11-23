@@ -84,6 +84,9 @@ class Transport:
             
             bc_val[b_faces[b_inflow]] = self.data[pp.PARAMETERS]["transport"]["bc_value"][0]
             bc_val[b_faces[b_outflow]] = self.data[pp.PARAMETERS]["transport"]["bc_value"][1]
+            
+            #tracer[b_faces[b_inflow]]= self.data[pp.PARAMETERS]["transport"]["bc_value"][0]
+            #tracer[b_faces[b_outflow]] = self.data[pp.PARAMETERS]["transport"]["bc_value"][1]
         
         else:
             bc = pp.BoundaryCondition(g) #, empty, empty)
@@ -92,6 +95,8 @@ class Transport:
         self.data[pp.PARAMETERS]["transport"]["bc_values"]=bc_val
         self.data[pp.PARAMETERS]["transport"].pop("bc_type")
         self.data[pp.PARAMETERS]["transport"].pop("bc_value")
+        
+        return tracer
     
     def set_initial_cond(self,tracer):
         tracer_t0=self.data[pp.PARAMETERS]["transport"]["initial_cond"]
