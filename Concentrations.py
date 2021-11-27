@@ -41,6 +41,7 @@ class Concentrations:
         bc_psi1=data["bc_value_Ca"]
         bc_psi2=np.array(data["bc_value_H_piu"])-np.array(data["bc_value_HCO3"])
         bc_psi3=np.array(data["bc_value_CO2"])+np.array(data["bc_value_HCO3"])
+        print(bc_psi3)
         bc_psi4=data["bc_value_CaSiO3"]
         bc_psi5=data["bc_value_SiO2"]
         return bc_psi1,bc_psi2,bc_psi3,bc_psi4,bc_psi5
