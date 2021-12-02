@@ -13,19 +13,18 @@ import porepy as pp
 
 
 class Concentrations:
-    def __init__(self,g,Nx,Nt,parameters=None):
+    def __init__(self,g,Nt,parameters=None):
         
         if not parameters:
             parameters={}
         self.g=g
-        self.Nx=Nx
         self.Nt=Nt
-        self.Ca=np.zeros((Nx,Nt+1))
-        self.CaSiO3=np.zeros((Nx,Nt+1))
-        self.CO2=np.zeros((Nx,Nt+1))
-        self.H_piu=np.zeros((Nx,Nt+1))
-        self.SiO2=np.zeros((Nx,Nt+1))
-        self.HCO3=np.zeros((Nx,Nt+1))
+        self.Ca=np.zeros((g.num_cells,Nt+1))
+        self.CaSiO3=np.zeros((g.num_cells,Nt+1))
+        self.CO2=np.zeros((g.num_cells,Nt+1))
+        self.H_piu=np.zeros((g.num_cells,Nt+1))
+        self.SiO2=np.zeros((g.num_cells,Nt+1))
+        self.HCO3=np.zeros((g.num_cells,Nt+1))
         self.data=pp.initialize_data(self.g, {}, "6reagents", parameters)
     
     def compute_psi(self,step,psi1,psi2,psi3,psi4,psi5):
@@ -41,7 +40,6 @@ class Concentrations:
         bc_psi1=data["bc_value_Ca"]
         bc_psi2=np.array(data["bc_value_H_piu"])-np.array(data["bc_value_HCO3"])
         bc_psi3=np.array(data["bc_value_CO2"])+np.array(data["bc_value_HCO3"])
-        print(bc_psi3)
         bc_psi4=data["bc_value_CaSiO3"]
         bc_psi5=data["bc_value_SiO2"]
         return bc_psi1,bc_psi2,bc_psi3,bc_psi4,bc_psi5
@@ -82,7 +80,7 @@ class Concentrations:
         
         psi1=self.Explicit_Euler(psi1,lhs_psi1,rhs_b_psi1,rhs_matrix_psi1,rd,h)
         psi2=self.Explicit_Euler(psi2,lhs_psi2,rhs_b_psi2,rhs_matrix_psi2,-2*rd,h)
-        psi3=self.Explicit_Euler(psi3,lhs_psi3,rhs_b_psi3,rhs_matrix_psi3,np.zeros(self.Nx),h)
+        psi3=self.Explicit_Euler(psi3,lhs_psi3,rhs_b_psi3,rhs_matrix_psi3,np.zeros(self.g.num_cells),h)
         psi4=self.Explicit_Euler(psi4,lhs_psi4,rhs_b_psi4,rhs_matrix_psi4,-rd,h)
         psi5=self.Explicit_Euler(psi5,lhs_psi5,rhs_b_psi5,rhs_matrix_psi5,rd,h)
         return psi1,psi2,psi3,psi4,psi5
@@ -103,7 +101,7 @@ class Concentrations:
         max_iter=500
         tol=1e-15
         dx=np.zeros(6)
-        for i in range(self.Nx):
+        for i in range(self.g.num_cells):
             old_it=[self.Ca[i,step-1],self.H_piu[i,step-1],self.HCO3[i,step-1],self.CO2[i,step-1],self.CaSiO3[i,step-1],self.SiO2[i,step-1]]
             itera=0
             err=1
