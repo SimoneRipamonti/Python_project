@@ -64,7 +64,7 @@ class Transport:
             tracer[i]=tracer_t0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
      
     #def set_matrices():
-    def get_transport_lhs_rhs(self):
+    def get_transport_lhs_rhs(self,delta_y=1):
         
         data=self.data[pp.PARAMETERS]["transport"]
         kw_t="transport"
@@ -85,9 +85,9 @@ class Transport:
         
         if data["method"]=="Explicit":
             lhs =1/dt*A_mass
-            rhs_matrix=1/dt*A_mass-A_upwind-decay*A_mass
+            rhs_matrix=1/dt*A_mass-delta_y*A_upwind-decay*A_mass
         else:
-            lhs=1/dt*A_mass+A_upwind
+            lhs=1/dt*A_mass+delta_y*A_upwind
             rhs_matrix=1/dt*A_mass-decay*A_mass
             
         rhs_b=b_upwind+b_mass        
@@ -95,10 +95,10 @@ class Transport:
         
         return lhs,rhs_b,rhs_matrix
     
-    def set_and_get_matrices(self,tracer):
+    def set_and_get_matrices(self,tracer,delta_y=1):
         self.set_bc()
         self.set_initial_cond(tracer)
-        tracer_lhs,tracer_rhs_b,tracer_rhs_matrix=self.get_transport_lhs_rhs()
+        tracer_lhs,tracer_rhs_b,tracer_rhs_matrix=self.get_transport_lhs_rhs(delta_y)
         return tracer_lhs,tracer_rhs_b,tracer_rhs_matrix
 
 
