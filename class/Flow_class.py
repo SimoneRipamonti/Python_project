@@ -83,7 +83,13 @@ class Flow:
     
     def print_pressure(self,p):
         pp.plot_grid(self.g,p,figsize=(15,12))
- 
+    
+    def compute_flux(self,p):
+        self.data[pp.STATE] = {"pressure": p}
+        pp.fvutils.compute_darcy_flux(self.g, data=self.data)
+        darcy_flux = self.data[pp.PARAMETERS]["flow"]["darcy_flux"]
+        return darcy_flux
+        
             
         
 

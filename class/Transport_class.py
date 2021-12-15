@@ -34,7 +34,7 @@ class Transport:
             
             b_face_centers = self.g.face_centers[:, b_faces]
             b_inflow = b_face_centers[0, :] < tol
-            b_outflow = b_face_centers[0, :] > 1-tol
+            b_outflow = b_face_centers[0, :] > self.g.nodes[0][-1]-tol
             
             labels = np.array(["neu"] * b_faces.size)
             labels[b_inflow] = self.data[pp.PARAMETERS]["transport"]["bc_type"][0]
@@ -85,7 +85,7 @@ class Transport:
         
         if data["method"]=="Explicit":
             lhs =1/dt*A_mass
-            rhs_matrix=1/dt*A_mass-delta_y*A_upwind-decay*A_mass
+            rhs_matrix=1/dt*A_mass-delta_y*A_upwind-decay*A_mass ##DELTA_Y
         else:
             lhs=1/dt*A_mass+delta_y*A_upwind
             rhs_matrix=1/dt*A_mass-decay*A_mass
