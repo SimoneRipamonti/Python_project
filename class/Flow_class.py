@@ -77,18 +77,29 @@ class Flow:
         if(self.method=="MVEM"):
             up = sps.linalg.spsolve(A, b_flow+b_rhs)
             p=flow_discretization.extract_pressure(self.g, up, self.data)
+            self.data[pp.PARAMETERS]["flow"]["darcy_flux"]=flow_discretization.extract_flux(self.g, up, self.data)
         else:
             p = sps.linalg.spsolve(A, b_flow+b_rhs)
         return p
     
-    def print_pressure(self,p):
+    def plot_pressure(self,p):
         pp.plot_grid(self.g,p,figsize=(15,12))
     
-    def compute_flux(self,p):
-        self.data[pp.STATE] = {"pressure": p}
-        pp.fvutils.compute_darcy_flux(self.g, data=self.data)
+    def get_flux(self,p):
+        if(self.method!="MVEM"):
+            self.data[pp.STATE] = {"pressure": p}
+            pp.fvutils.compute_darcy_flux(self.g, data=self.data)
         darcy_flux = self.data[pp.PARAMETERS]["flow"]["darcy_flux"]
         return darcy_flux
+    
+    def plot_pressure_flux(self,flux,p):
+        if(self.method=="MVEM"):
+            flow_discretization = pp.MVEM("flow")
+            P0u = flow_discretization.project_flux(self.g,flux,self.data)
+            pp.plot_grid(self.g, p, P0u * 0.2, figsize=(15, 12))
+        else:
+            print("For plotting vel and pressure togheter with this function, it is mandatory to use the MVEM method")
+
         
             
         
