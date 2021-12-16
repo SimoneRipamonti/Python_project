@@ -53,7 +53,7 @@ class Flow:
         f=np.zeros(self.Nx)
         f_lambda=self.data[pp.PARAMETERS]["flow"]["f_lambda"]
         for i in range(self.g.num_cells):
-            f[i]=0.01*f_lambda(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
+            f[i]=self.g.cell_volumes[i]*f_lambda(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
         self.data[pp.PARAMETERS]['flow']["source"]=f
         self.data[pp.PARAMETERS]["flow"].pop("f_lambda")
         

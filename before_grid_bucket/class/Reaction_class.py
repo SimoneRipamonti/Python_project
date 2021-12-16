@@ -34,7 +34,7 @@ class Reaction:
         self.const_rate=A*const*math.exp(-E/(R*temperature))
         
     
-    def compute_rd(self,past_sol,hx,hy=1):
+    def compute_rd(self,past_sol):
         data=self.data[pp.PARAMETERS]["reaction"]
         ph=data["ph"]
         phi=data["mass_weight"]
@@ -44,10 +44,10 @@ class Reaction:
         rhs=np.zeros(self.g.num_cells)
         for i in range(self.g.num_cells):
             #rhs[i]=h*phi*max(self.const_rate*(1.0-p[i]),0.0)
-            rhs[i]=hx*hy*max(self.const_rate*(1.0-p[i]),0.0)
+            rhs[i]=self.g.cell_volumes[i]*max(self.const_rate*(1.0-p[i]),0.0)
         return rhs
     
-    def compute_rd_6_reagents(self,Ca,SiO2,H_piu,CaSiO3,rd,hx,hy=1):
+    def compute_rd_6_reagents(self,Ca,SiO2,H_piu,CaSiO3,rd):
         data=self.data[pp.PARAMETERS]["reaction"]
         porosity=data["porosity"]
         kd=data["kd"]
@@ -56,7 +56,7 @@ class Reaction:
         for i in range(rd.size):
             omega[i]=Ca[i]*SiO2[i]/(H_piu[i]*H_piu[i])
             omega/=K_sol
-            rd[i]=hx*hy*porosity[i]*kd*max((1-omega[i]),0.0)*CaSiO3[i]
+            rd[i]=self.g.cell_volumes[i]*porosity[i]*kd*max((1-omega[i]),0.0)*CaSiO3[i]
         return rd
     
     
