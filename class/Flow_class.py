@@ -8,6 +8,7 @@ import numpy as np
 import scipy.sparse as sps
 import porepy as pp
 import math
+import data.flow_benchmark_2d_geiger_setup as setup
 
 
 # In[4]:
@@ -37,6 +38,7 @@ class Flow:
             
             #BOUNDARIES
             bc,bc_val=self.set_bc(g)
+            
             ##PER ESEMPIO PHASE FLOW
             #b_faces = g.tags['domain_boundary_faces'].nonzero()[0]
             #bc = pp.BoundaryCondition(g, b_faces, ['dir']*b_faces.size)
@@ -52,6 +54,10 @@ class Flow:
                 # dividing by the distance from the matrix to the center of the fracture.
                 kn = fracture_perm / (aperture/2)
                 pp.initialize_data(mg, d, "flow", {"normal_diffusivity": kn})
+    
+    def add_data(self):
+        setup.add_data(self.gb, self.domain,self.param["fracture_perm"])
+        
     
     def set_bc(self,g):
         bc_value=self.param["bc_value"]
@@ -75,7 +81,8 @@ class Flow:
                 labels[right]="dir"
             
             bc_val=np.zeros(g.num_faces)
-            bc_val[b_faces[left]]=bc_value[0]
+            
+            bc_val[b_faces[left]] =bc_value[0]
             bc_val[b_faces[right]]=bc_value[1]
             
             bc = pp.BoundaryCondition(g, b_faces,labels)
@@ -130,7 +137,7 @@ class Flow:
         assembler.distribute_variable(solution)
     
     def get_flux(self):
-        pp.fvutils.compute_darcy_flux(self.gb,"flow")
+        pp.fvutils.compute_darcy_flux(self.gb,keyword_store="transport",lam_name="mortar_flux")
     
     def plot_pressure(self):
         pp.plot_grid(self.gb,"pressure",figsize=(15,12))
