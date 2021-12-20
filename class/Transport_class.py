@@ -23,7 +23,7 @@ class Transport:
         self.parameter_keyword=kw
         
     def set_data(self):
-        aperture=self.param["aperture"]
+        aperture_=self.param["aperture"]
         por=self.param["por"]
         por_frac=self.param["por_frac"] 
         time_step=self.param["time_step"]
@@ -39,7 +39,7 @@ class Transport:
                 aperture = 1
             else:#se sono nella frattura
                 porosity = por_frac*unity
-                aperture = np.power(aperture, self.gb.dim_max() - g.dim)
+                aperture = np.power(aperture_, self.gb.dim_max() - g.dim)
             # Inherit the aperture assigned for the flow problem
             
             specified_parameters = {
@@ -51,7 +51,7 @@ class Transport:
             }
             pp.initialize_default_data(g, d,self.parameter_keyword, specified_parameters)
             # Store the dimension in the dictionary for visualization purposes
-            d[pp.STATE] = {"dimension": g.dim * np.ones(g.num_cells)}
+            d[pp.STATE].update({"dimension": g.dim * np.ones(g.num_cells)})
         
         for e, d in self.gb.edges():#edges del grafo Gridbucket
             d[pp.PARAMETERS].update_dictionaries(self.parameter_keyword, {})
@@ -136,30 +136,38 @@ class Transport:
         assembler.discretize(filt=filt)
         A, b = assembler.assemble_matrix_rhs(filt=filt, add_matrices=False)
         
+        # Identifier of the discretization operator on each grid
+        advection_term = "advection"
+        source_term = "source"
+        mass_term = "mass"
+        
+        # Identifier of the discretization operator between grids
+        advection_coupling_term = "advection_coupling"
+        
         advection_coupling_term += ("_" + self.mortar_variable + "_" + self.grid_variable + "_" + self.grid_variable)
         mass_term += "_" + self.grid_variable
         advection_term += "_" + self.grid_variable
         source_term += "_" + self.grid_variable
         
-        lhs = A[mass_term] + data["time_step"] * (A[advection_term] + A[advection_coupling_term])
-        rhs_source_adv = b[source_term] + data["time_step"] * (b[advection_term] + b[advection_coupling_term])
+        lhs = A[mass_term] + self.param["time_step"] * (A[advection_term] + A[advection_coupling_term])
+        rhs_source_adv = b[source_term] + self.param["time_step"] * (b[advection_term] + b[advection_coupling_term])
         rhs_mass=A[mass_term]
         
         return lhs,rhs_source_adv,rhs_mass,assembler
     
-    def set_initial_cond(self,tracer,assembler):
-        tracer_t0=self.param["initial_cond"]
-        for i in range(tracer.size):
-            for g,d in self.gb:
-                tracer[i]=tracer_t0(g.cell_centers[0,i],g.cell_centers[1,i],g.cell_centers[2,i])
+    #def set_initial_cond(self,tracer,assembler):
+        #tracer_t0=self.param["initial_cond"]
+        #for i in range(tracer.size):
+            #for g,d in self.gb:
+                #tracer[i]=tracer_t0(g.cell_centers[0,i],g.cell_centers[1,i],g.cell_centers[2,i])
             
-        assembler.distribute_variable(tracer, variable_names=[self.grid_variable, self.mortar_variable])
-        return assembler
+        #assembler.distribute_variable(tracer, variable_names=[self.grid_variable, self.mortar_variable])
+        #return assembler
     
     def get_flux(self):
-        pp.fvutils.compute_darcy_flux(self.gb,keyword_store="transport",lam_name=self.mortar_variable)
+        pp.fvutils.compute_darcy_flux(self.gb,keyword_store="transport",lam_name="mortar_flux")
     
-    def plot_tracer():
+    def plot_tracer(self):
         pp.plot_grid(self.gb, self.grid_variable, figsize=(15, 12))
      
     #def set_and_get_matrices(self,tracer):
