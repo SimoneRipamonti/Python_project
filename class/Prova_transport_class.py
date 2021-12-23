@@ -7,6 +7,7 @@
 import numpy as np
 import scipy.sparse as sps
 import porepy as pp
+import math
 
 
 # In[ ]:
@@ -168,6 +169,34 @@ class Transport:
             
         #assembler.distribute_variable(tracer, variable_names=[self.grid_variable, self.mortar_variable])
         #return assembler
+    
+    def compute_rd(self,reaction_param,keyword):
+        const_rate=self.set_const_rate(reaction_param)
+        ph=reaction_param["ph"]
+        phi=reaction_param["mass_weight"]
+        K_eq=reaction_param["K_eq"]
+        
+        for g,d in self.gb:
+            past_sol=d[pp.STATE][keyword]
+            p=np.power(past_sol,2)/(K_eq*math.pow(10,-2*ph))
+            rhs=np.zeros(g.num_cells)
+            for i in range(rhs.size):
+                rhs[i]=g.cell_volumes[i]*max(const_rate*(1.0-p[i]),0.0)
+                d[pp.PARAMETERS]["Ca"]["source"]+=rhs
+                #d[pp.PARAMETERS]["CaSiO3"]["source"]+=rhs
+    
+    def set_const_rate(self,reaction_param):
+        A=reaction_param["A"]
+        const=reaction_param["rate_const"]
+        E=reaction_param["E"]
+        R=reaction_param["R"]
+        temperature=reaction_param["temperature"]
+        
+        return A*const*math.exp(-E/(R*temperature))
+    
+    
+    
+    
     
     def get_flux(self,keyword):
         pp.fvutils.compute_darcy_flux(self.gb,keyword_store=keyword,lam_name="mortar_flux")
