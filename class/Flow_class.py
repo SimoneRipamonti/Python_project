@@ -65,6 +65,7 @@ class Flow:
         #bc_lambda=self.param["bc_lambda"]
         
         b_faces=g.tags["domain_boundary_faces"].nonzero()[0]
+        bc_val=np.zeros(g.num_faces)
         
         if b_faces.size != 0:
             b_face_centers=g.face_centers[:,b_faces]
@@ -80,15 +81,13 @@ class Flow:
             if(bc_type[1]=="dir"):
                 labels[right]="dir"
             
-            bc_val=np.zeros(g.num_faces)
-            
             bc_val[b_faces[left]] =bc_value[0]
             bc_val[b_faces[right]]=bc_value[1]
             
-            bc = pp.BoundaryCondition(g, b_faces,labels)
+            bc= pp.BoundaryCondition(g, b_faces,labels)
         
         else:
-            bc = pp.BoundaryCondition(g, np.empty(0), np.empty(0))
+            bc= pp.BoundaryCondition(g, np.empty(0), np.empty(0))
         
         return bc,bc_val
         

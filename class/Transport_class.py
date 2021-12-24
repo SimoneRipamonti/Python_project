@@ -7,22 +7,24 @@
 import numpy as np
 import scipy.sparse as sps
 import porepy as pp
+import math
 
 
 # In[ ]:
 
 
 class Transport:
-    def __init__(self,gb,domain,parameter,grid_variable="tracer",mortar_variable="mortar_tracer",kw="transport"):
+    def __init__(self,gb,domain,parameter,mortar_variable="mortar_tracer",kw="transport"):
         
         self.gb=gb
         self.domain=domain
         self.param=parameter
-        self.grid_variable=grid_variable
+        #self.grid_variable=grid_variable
         self.mortar_variable=mortar_variable
         self.parameter_keyword=kw
         
-    def set_data(self):
+    def set_data(self,bc_value,bc_type,keyword):
+    #def set_data(self):
         aperture_=self.param["aperture"]
         por=self.param["por"]
         por_frac=self.param["por_frac"] 
@@ -33,7 +35,8 @@ class Transport:
             # Boundary conditions: Dirichlet for left and right side of the domain
             unity = np.ones(g.num_cells)
             empty = np.empty(0)
-            bc,bc_val=self.set_bc(g)
+            bc,bc_val=self.set_bc(g,bc_value,bc_type)
+            #bc,bc_val=self.set_bc(g)
             if g.dim == self.gb.dim_max():#se sono nella matrice porosa
                 porosity = por* unity
                 aperture = 1
@@ -47,21 +50,24 @@ class Transport:
                 "bc_values": bc_val,
                 "time_step": time_step,
                 "mass_weight": porosity * aperture,
+                "second_order_tensor": pp.SecondOrderTensor(np.ones(g.num_cells)),
                 "t_max": t_max,
+                "source":np.zeros(g.num_cells)
             }
-            pp.initialize_default_data(g, d,self.parameter_keyword, specified_parameters)
+            pp.initialize_data(g, d, keyword, specified_parameters)
             # Store the dimension in the dictionary for visualization purposes
             d[pp.STATE].update({"dimension": g.dim * np.ones(g.num_cells)})
         
         for e, d in self.gb.edges():#edges del grafo Gridbucket
-            d[pp.PARAMETERS].update_dictionaries(self.parameter_keyword, {})
-            d[pp.DISCRETIZATION_MATRICES][self.parameter_keyword] = {}
+            d[pp.PARAMETERS].update_dictionaries(keyword, {})
+            d[pp.DISCRETIZATION_MATRICES][keyword] = {}
             
-    def set_bc(self,g):
+    def set_bc(self,g,bc_value,bc_type):
+    #def set_bc(self,g):
         tol = 1e-4
         
-        bc_value=self.param["bc_value"]
-        bc_type=self.param["bc_type"]
+        #bc_value=self.param["bc_value"]
+        #bc_type=self.param["bc_type"]
         
         b_faces = g.tags["domain_boundary_faces"].nonzero()[0]
         bc_val = np.zeros(g.num_faces)
@@ -84,7 +90,7 @@ class Transport:
             bc = pp.BoundaryCondition(g) #, empty, empty)
         return bc,bc_val
     
-    def discretize(self):
+    def discretize(self,keyword):
         
         # Identifier of the discretization operator on each grid
         advection_term = "advection"
@@ -95,25 +101,25 @@ class Transport:
         advection_coupling_term = "advection_coupling"
         
         # Discretization objects
-        node_discretization = pp.Upwind("transport")
-        source_discretization = pp.ScalarSource("transport")
-        mass_discretization = pp.MassMatrix("transport")
-        edge_discretization = pp.UpwindCoupling("transport")
+        node_discretization = pp.Upwind(keyword)
+        source_discretization = pp.ScalarSource(keyword)
+        mass_discretization = pp.MassMatrix(keyword)
+        edge_discretization = pp.UpwindCoupling(keyword)
         
         # Loop over the nodes in the GridBucket, define primary variables and discretization schemes
         for g, d in self.gb:
             # Assign primary variables on this grid. It has one degree of freedom per cell.
-            d[pp.PRIMARY_VARIABLES] = {self.grid_variable: {"cells": 1, "faces": 0}}
+            d[pp.PRIMARY_VARIABLES] = {keyword: {"cells": 1, "faces": 0}}
             # Assign discretization operator for the variable.
             d[pp.DISCRETIZATION] = {
-                self.grid_variable: {
+                keyword: {
                     advection_term: node_discretization,
                     source_term: source_discretization,
                     mass_term: mass_discretization,
                 }
             }
             if g.dim == 2:
-                data = d[pp.PARAMETERS][self.parameter_keyword]
+                data = d[pp.PARAMETERS][keyword]
             
             # Loop over the edges in the GridBucket, define primary variables and discretizations
             for e, d in self.gb.edges():
@@ -122,15 +128,15 @@ class Transport:
                 d[pp.PRIMARY_VARIABLES] = {self.mortar_variable: {"cells": 1}}
                 d[pp.COUPLING_DISCRETIZATION] = {
                     advection_coupling_term: {
-                        g1: (self.grid_variable, advection_term),
-                        g2: (self.grid_variable, advection_term),
+                        g1: (keyword, advection_term),
+                        g2: (keyword, advection_term),
                         e: (self.mortar_variable, edge_discretization),
                     }
                 }
     
-    def get_transport_lhs_rhs(self):
-        # Use a filter to let the assembler consider grid and mortar variable only
-        filt = pp.assembler_filters.ListFilter(variable_list=[self.grid_variable, self.mortar_variable])
+    def get_transport_lhs_rhs(self,keyword):
+         # Use a filter to let the assembler consider grid and mortar variable only
+        filt = pp.assembler_filters.ListFilter(variable_list=[keyword, self.mortar_variable])
         assembler = pp.Assembler(self.gb)
         
         assembler.discretize(filt=filt)
@@ -144,10 +150,11 @@ class Transport:
         # Identifier of the discretization operator between grids
         advection_coupling_term = "advection_coupling"
         
-        advection_coupling_term += ("_" + self.mortar_variable + "_" + self.grid_variable + "_" + self.grid_variable)
-        mass_term += "_" + self.grid_variable
-        advection_term += "_" + self.grid_variable
-        source_term += "_" + self.grid_variable
+        advection_coupling_term += ("_" + self.mortar_variable + "_" + keyword + "_" + keyword)
+        mass_term += "_" + keyword
+        advection_term += "_" + keyword
+        source_term += "_" + keyword
+
         
         lhs = A[mass_term] + self.param["time_step"] * (A[advection_term] + A[advection_coupling_term])
         rhs_source_adv = b[source_term] + self.param["time_step"] * (b[advection_term] + b[advection_coupling_term])
@@ -164,11 +171,39 @@ class Transport:
         #assembler.distribute_variable(tracer, variable_names=[self.grid_variable, self.mortar_variable])
         #return assembler
     
-    def get_flux(self):
-        pp.fvutils.compute_darcy_flux(self.gb,keyword_store="transport",lam_name="mortar_flux")
+    def compute_rd(self,reaction_param,keyword):
+        const_rate=self.set_const_rate(reaction_param)
+        ph=reaction_param["ph"]
+        phi=reaction_param["mass_weight"]
+        K_eq=reaction_param["K_eq"]
+        
+        for g,d in self.gb:
+            past_sol=d[pp.STATE][keyword]
+            p=np.power(past_sol,2)/(K_eq*math.pow(10,-2*ph))
+            rhs=np.zeros(g.num_cells)
+            for i in range(rhs.size):
+                rhs[i]=g.cell_volumes[i]*max(const_rate*(1.0-p[i]),0.0)
+                d[pp.PARAMETERS]["Ca"]["source"]+=rhs
+                #d[pp.PARAMETERS]["CaSiO3"]["source"]+=rhs
     
-    def plot_tracer(self):
-        pp.plot_grid(self.gb, self.grid_variable, figsize=(15, 12))
+    def set_const_rate(self,reaction_param):
+        A=reaction_param["A"]
+        const=reaction_param["rate_const"]
+        E=reaction_param["E"]
+        R=reaction_param["R"]
+        temperature=reaction_param["temperature"]
+        
+        return A*const*math.exp(-E/(R*temperature))
+    
+    
+    
+    
+    
+    def get_flux(self,keyword):
+        pp.fvutils.compute_darcy_flux(self.gb,keyword_store=keyword,lam_name="mortar_flux")
+    
+    def plot_tracer(self,keyword):
+        pp.plot_grid(self.gb, keyword, figsize=(15, 12))
      
     #def set_and_get_matrices(self,tracer):
         #self.set_bc()
