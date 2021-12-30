@@ -16,36 +16,30 @@ import matplotlib.pyplot as plt
 
 
 class Reaction:
-    def __init__(self,g,parameters=None):
+    def __init__(self,parameters=None):
         if not parameters:
             parameters={}
-        self.g=g
-        self.data=pp.initialize_data(g, {}, 'reaction', parameters)
+        self.parameters=parameters
         self.const_rate=None
+        self.ph=parameters["ph"]
+        self.phi=parameters["mass_weight"]
+        self.K_eq=parameters["K_eq"]
         
+    def compute_rd(self,tracer,rd):
+        p=np.power(tracer,2)/(self.K_eq*math.pow(10,-2*self.ph))
+        for i in range(tracer.size):
+            rd[i]=self.const_rate*max((1.0-p[i]),0.0)
+        return rd
+    
     def set_const_rate(self):
-        data=self.data[pp.PARAMETERS]["reaction"]
-        A=data["A"]
-        const=data["rate_const"]
-        E=data["E"]
-        R=data["R"]
-        temperature=data["temperature"]
+        A=self.parameters["A"]
+        const=self.parameters["rate_const"]
+        E=self.parameters["E"]
+        R=self.parameters["R"]
+        temperature=self.parameters["temperature"]
         
         self.const_rate=A*const*math.exp(-E/(R*temperature))
-        
-    
-    def compute_rd(self,past_sol):
-        data=self.data[pp.PARAMETERS]["reaction"]
-        ph=data["ph"]
-        phi=data["mass_weight"]
-        K_eq=data["K_eq"]
-        p=np.power(past_sol,2)/(K_eq*math.pow(10,-2*ph))
-        #rhs=np.zeros(Nx)
-        rhs=np.zeros(self.g.num_cells)
-        for i in range(self.g.num_cells):
-            #rhs[i]=h*phi*max(self.const_rate*(1.0-p[i]),0.0)
-            rhs[i]=self.g.cell_volumes[i]*max(self.const_rate*(1.0-p[i]),0.0)
-        return rhs
+            
     
     def compute_rd_6_reagents(self,Ca,SiO2,H_piu,CaSiO3,rd):
         data=self.data[pp.PARAMETERS]["reaction"]
