@@ -7,6 +7,7 @@
 import numpy as np
 import scipy.sparse as sps
 import porepy as pp
+import math
 
 
 # In[ ]:
@@ -150,6 +151,20 @@ class Transport:
         mass_term += "_" + self.grid_variable
         advection_term += "_" + self.grid_variable
         source_term += "_" + self.grid_variable
+        
+        print("mass")
+        print(A[mass_term])
+        print("Advection")
+        print(A[advection_term])
+        print("A_coupling")
+        print(A[advection_coupling_term])
+        
+        print("b_source")
+        print(b[source_term])
+        print("b_advection")
+        print(b[advection_term])
+        print("b_coupling")
+        print(b[advection_coupling_term])
         
         lhs = A[mass_term] + self.param["time_step"] * (A[advection_term] + A[advection_coupling_term])
         rhs_source_adv = b[source_term] + self.param["time_step"] * (b[advection_term] + b[advection_coupling_term])

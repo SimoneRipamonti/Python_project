@@ -45,6 +45,7 @@ class Reaction:
         for i in range(self.g.num_cells):
             #rhs[i]=h*phi*max(self.const_rate*(1.0-p[i]),0.0)
             rhs[i]=self.g.cell_volumes[i]*max(self.const_rate*(1.0-p[i]),0.0)
+            #rhs[i]=max(self.const_rate*(1.0-p[i]),0.0)
         return rhs
     
     def compute_rd_6_reagents(self,Ca,SiO2,H_piu,CaSiO3,rd):

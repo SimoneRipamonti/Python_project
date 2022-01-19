@@ -43,8 +43,8 @@ def add_data(gb, domain, kf):
             labels[right] = "dir"
 
             bc_val = np.zeros(g.num_faces)
-            bc_val[bound_faces[left]] = -a_dim * g.face_areas[bound_faces[left]]
-            bc_val[bound_faces[right]] = 1
+            #bc_val[bound_faces[left]] = -a_dim * g.face_areas[bound_faces[left]]
+            #bc_val[bound_faces[right]] = 1
 
             bound = pp.BoundaryCondition(g, bound_faces, labels)
             specified_parameters.update({"bc": bound, "bc_values": bc_val})
@@ -59,5 +59,7 @@ def add_data(gb, domain, kf):
     for _, d in gb.edges():
         mg = d["mortar_grid"]
         kn = 2 * kf * np.ones(mg.num_cells) / a
+        #kn =kf*np.ones(mg.num_cells)
+        #kn=np.zeros(mg.num_cells)
         d[pp.PARAMETERS] = pp.Parameters(mg, ["flow"], [{"normal_diffusivity": kn}])
         d[pp.DISCRETIZATION_MATRICES] = {"flow": {}}
