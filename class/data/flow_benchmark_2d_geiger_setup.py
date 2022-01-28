@@ -39,12 +39,22 @@ def add_data(gb, domain, kf):
             left = bound_face_centers[0, :] < domain["xmin"] + tol
             right = bound_face_centers[0, :] > domain["xmax"] - tol
 
-            labels = np.array(["neu"] * bound_faces.size)
-            labels[right] = "dir"
-
+            labels = np.array(["neu"] * bound_faces.size)#Condizioni di Neuman nel problema di Darcy sono sulla componente normale della velocità
+            
+            
             bc_val = np.zeros(g.num_faces)
+            
+            
+            #Per il tracer_transport
+            #labels[right] = "dir" #Per il tracer_transport
             #bc_val[bound_faces[left]] = -a_dim * g.face_areas[bound_faces[left]]
             #bc_val[bound_faces[right]] = 1
+            
+            
+            #Per la reazione di dissoluzione della CaSiO3
+            labels[left]="dir"
+            bc_val[bound_faces[left]]=0.3
+            bc_val[bound_faces[right]]=6.67e-6
 
             bound = pp.BoundaryCondition(g, bound_faces, labels)
             specified_parameters.update({"bc": bound, "bc_values": bc_val})
