@@ -11,7 +11,7 @@ import math
 import data.flow_benchmark_2d_geiger_setup as setup
 
 
-# In[2]:
+# In[1]:
 
 
 class Flow:
@@ -23,9 +23,10 @@ class Flow:
     def set_data(self):
         
         aperture=self.param["aperture"]
-        #fracture_perm=self.param["fracture_perm"]
-        fracture_perm_1=self.param["fracture_perm_1"]
-        fracture_perm_2=self.param["fracture_perm_2"]
+        fracture_perm=self.param["fracture_perm"]
+        
+        #fracture_perm_1=self.param["fracture_perm_1"]
+        #fracture_perm_2=self.param["fracture_perm_2"]
         
         kx=self.param["perm"]
         tol = 1e-5
@@ -38,14 +39,14 @@ class Flow:
             k = kx*np.ones(g.num_cells) * specific_volumes#è la kx e basta per la frattura
             
             
-            #if g.dim < self.gb.dim_max():#la g è quella della frattura?
-                    #k *= fracture_perm
-
             if g.dim < self.gb.dim_max():#la g è quella della frattura?
-                if j==0:
-                    k *= fracture_perm_1
-                else:
-                    k*=fracture_perm_2
+                    k *= fracture_perm
+
+            #if g.dim < self.gb.dim_max():#la g è quella della frattura?
+                #if j==0:
+                    #k *= fracture_perm_1
+                #else:
+                    #k*=fracture_perm_2
                     
             perm = pp.SecondOrderTensor(k)                   
             
@@ -66,14 +67,18 @@ class Flow:
         j=0
         for e, d in self.gb.edges():
             mg = d["mortar_grid"]
+            kn = fracture_perm/ (aperture/2)
+            pp.initialize_data(mg, d, "flow", {"normal_diffusivity": kn})
             # Division through aperture/2 may be thought of as taking the gradient, i.e.
             # dividing by the distance from the matrix to the center of the fracture.
-            if j==0:
-                kn = fracture_perm_1 / (aperture/2)
-                pp.initialize_data(mg, d, "flow", {"normal_diffusivity": kn})
-            else:
-                kn = fracture_perm_2 / (aperture/2)
-                pp.initialize_data(mg, d, "flow", {"normal_diffusivity": kn})
+            
+            
+            #if j==0:
+                #kn = fracture_perm_1 / (aperture/2)
+                #pp.initialize_data(mg, d, "flow", {"normal_diffusivity": kn})
+            #else:
+                #kn = fracture_perm_2 / (aperture/2)
+                #pp.initialize_data(mg, d, "flow", {"normal_diffusivity": kn})
             j+=1
                 
     

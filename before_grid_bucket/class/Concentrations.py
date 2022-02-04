@@ -59,6 +59,7 @@ class Concentrations:
             self.H_piu[:,0]=H_piu_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
             self.SiO2[:,0]=SiO2_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
             self.HCO3[:,0]=K_eq*CO2_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])/H_piu_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
+            #self.HCO3[:,0]=HCO3_0(self.g.cell_centers[0,i],self.g.cell_centers[1,i],self.g.cell_centers[2,i])
     
     def set_solver(self,psi_lhs):
         IEsolver = sps.linalg.factorized(psi_lhs)
