@@ -37,10 +37,14 @@ class Flow:
             specific_volumes = np.power(aperture, self.gb.dim_max()-g.dim)
             # Permeability
             k = kx*np.ones(g.num_cells) * specific_volumes#è la kx e basta per la frattura
+            print("matrix permeability")
+            print(k)
             
             
             if g.dim < self.gb.dim_max():#la g è quella della frattura?
-                    k *= fracture_perm
+                k *= fracture_perm
+                print("fracture permeability")
+                print(k)
 
             #if g.dim < self.gb.dim_max():#la g è quella della frattura?
                 #if j==0:
@@ -68,6 +72,7 @@ class Flow:
         for e, d in self.gb.edges():
             mg = d["mortar_grid"]
             kn = fracture_perm/ (aperture/2)
+            #kn=0.3
             pp.initialize_data(mg, d, "flow", {"normal_diffusivity": kn})
             # Division through aperture/2 may be thought of as taking the gradient, i.e.
             # dividing by the distance from the matrix to the center of the fracture.
