@@ -36,6 +36,8 @@ class Transport:
             unity = np.ones(g.num_cells)
             empty = np.empty(0)
             bc,bc_val=self.set_bc(g,bc_value,bc_type)
+            #print("bc_val")
+            #print(bc_val)
             #bc,bc_val=self.set_bc(g)
             if g.dim == self.gb.dim_max():#se sono nella matrice porosa
                 porosity = por* unity
@@ -64,7 +66,7 @@ class Transport:
             
     def set_bc(self,g,bc_value,bc_type):
     #def set_bc(self,g):
-        tol = 1e-4
+        tol = 1e-8
         
         #bc_value=self.param["bc_value"]
         #bc_type=self.param["bc_type"]
@@ -78,11 +80,13 @@ class Transport:
         if b_faces.size != 0:
             b_face_centers = g.face_centers[:, b_faces]
             b_inflow = b_face_centers[0, :] < tol
-            b_outflow = b_face_centers[0, :] > 1-tol
+            b_outflow = b_face_centers[0, :] > self.domain["xmax"]-tol
             
             labels = np.array(["neu"] * b_faces.size)
             labels[np.logical_or(b_inflow, b_outflow)] = "dir"
             bc = pp.BoundaryCondition(g, b_faces, labels)
+            #print("labels")
+            #print(labels)
                 
             bc_val[b_faces[b_inflow]] = bc_value[0]
             bc_val[b_faces[b_outflow]]= bc_value[1]
@@ -155,20 +159,12 @@ class Transport:
         advection_term += "_" + keyword
         source_term += "_" + keyword
         
-        print("mass")
-        print(A[mass_term])
-        print("Advection")
-        print(A[advection_term])
-        print("A_coupling")
-        print(A[advection_coupling_term])
-        
-        #print("b_source")
-        #print(b[source_term])
-        #print("b_advection")
-        #print(b[advection_term])
-        #print("b_coupling")
-        #print(b[advection_coupling_term])
-
+        #print("mass")
+        #print(A[mass_term])
+        #print("Advection")
+        #print(A[advection_term])
+        #print("A_coupling")
+        #print(A[advection_coupling_term])
         
         lhs = A[mass_term] + self.param["time_step"] * (A[advection_term] + A[advection_coupling_term])
         rhs_source_adv = b[source_term] + self.param["time_step"] * (b[advection_term] + b[advection_coupling_term])
