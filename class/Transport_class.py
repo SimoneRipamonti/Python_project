@@ -95,6 +95,7 @@ class Transport:
         return bc,bc_val
     
     def discretize(self,keyword):
+        mortar_variable=self.mortar_variable+keyword
         
         # Identifier of the discretization operator on each grid
         advection_term = "advection"
@@ -129,18 +130,20 @@ class Transport:
             for e, d in self.gb.edges():
                 g1, g2 = self.gb.nodes_of_edge(e)
                 # The mortar variable has one degree of freedom per cell in the mortar grid
-                d[pp.PRIMARY_VARIABLES] = {self.mortar_variable: {"cells": 1}}
+                d[pp.PRIMARY_VARIABLES] = {mortar_variable: {"cells": 1}}
                 d[pp.COUPLING_DISCRETIZATION] = {
                     advection_coupling_term: {
                         g1: (keyword, advection_term),
                         g2: (keyword, advection_term),
-                        e: (self.mortar_variable, edge_discretization),
+                        e: (mortar_variable, edge_discretization),
                     }
                 }
     
     def get_transport_lhs_rhs(self,keyword):
          # Use a filter to let the assembler consider grid and mortar variable only
-        filt = pp.assembler_filters.ListFilter(variable_list=[keyword, self.mortar_variable])
+        mortar_variable=self.mortar_variable+keyword
+        
+        filt = pp.assembler_filters.ListFilter(variable_list=[keyword, mortar_variable])
         assembler = pp.Assembler(self.gb)
         
         assembler.discretize(filt=filt)
@@ -154,7 +157,7 @@ class Transport:
         # Identifier of the discretization operator between grids
         advection_coupling_term = "advection_coupling"
         
-        advection_coupling_term += ("_" + self.mortar_variable + "_" + keyword + "_" + keyword)
+        advection_coupling_term += ("_" + mortar_variable + "_" + keyword + "_" + keyword)
         mass_term += "_" + keyword
         advection_term += "_" + keyword
         source_term += "_" + keyword
