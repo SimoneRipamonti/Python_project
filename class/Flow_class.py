@@ -37,14 +37,10 @@ class Flow:
             specific_volumes = np.power(aperture, self.gb.dim_max()-g.dim)
             # Permeability
             k = kx*np.ones(g.num_cells) * specific_volumes#è la kx e basta per la frattura
-            print("matrix permeability")
-            print(k)
             
             
             if g.dim < self.gb.dim_max():#la g è quella della frattura?
                 k *= fracture_perm
-                print("fracture permeability")
-                print(k)
 
             #if g.dim < self.gb.dim_max():#la g è quella della frattura?
                 #if j==0:

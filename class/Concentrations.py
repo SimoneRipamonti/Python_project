@@ -39,16 +39,16 @@ class Concentrations:
     def one_step_transport_reaction(self,psi1,psi2,psi3,psi4,psi5,lhs_psi1,rhs_b_psi1,rhs_mass_psi1,
                                                                         lhs_psi2,rhs_b_psi2,rhs_mass_psi2,
                                                                         lhs_psi3,rhs_b_psi3,rhs_mass_psi3,
-                                                                        lhs_psi4,rhs_b_psi4,rhs_matrix_psi4,
-                                                                        lhs_psi5,rhs_b_psi5,rhs_matrix_psi5,rd,dt):
-        psi1=self.Explicit_Euler(psi1,lhs_psi1,rhs_b_psi1,rhs_matrix_psi1,rd,dt)
-        psi2=self.Explicit_Euler(psi2,lhs_psi2,rhs_b_psi2,rhs_matrix_psi2,-2*rd,dt)
-        psi3=self.Explicit_Euler(psi3,lhs_psi3,rhs_b_psi3,rhs_matrix_psi3,np.zeros(psi1.size),dt)
-        psi4=self.Explicit_Euler(psi4,lhs_psi4,rhs_b_psi4,rhs_matrix_psi4,-rd,dt)
-        psi5=self.Explicit_Euler(psi5,lhs_psi5,rhs_b_psi5,rhs_matrix_psi5,rd,dt)
+                                                                        lhs_psi4,rhs_b_psi4,rhs_mass_psi4,
+                                                                        lhs_psi5,rhs_b_psi5,rhs_mass_psi5,rd,dt):
+        psi1=self.Explicit_Euler(psi1,lhs_psi1,rhs_b_psi1,rhs_mass_psi1,rd,dt)
+        psi2=self.Explicit_Euler(psi2,lhs_psi2,rhs_b_psi2,rhs_mass_psi2,-2*rd,dt)
+        psi3=self.Explicit_Euler(psi3,lhs_psi3,rhs_b_psi3,rhs_mass_psi3,np.zeros(psi1.size),dt)
+        psi4=self.Explicit_Euler(psi4,lhs_psi4,rhs_b_psi4,rhs_mass_psi4,-rd,dt)
+        psi5=self.Explicit_Euler(psi5,lhs_psi5,rhs_b_psi5,rhs_mass_psi5,rd,dt)
         return psi1,psi2,psi3,psi4,psi5
     
-    def compute_concentration(self,psi1,psi2,psi3,psi4,psi5,step,K_eq,Ca,H_piu,HCO3,CO2,CaSiO3,SiO2):
+    def compute_concentration(self,psi1,psi2,psi3,psi4,psi5,K_eq,Ca,H_piu,HCO3,CO2,CaSiO3,SiO2):
         rhs=np.zeros(6)
         Jacob=np.zeros([6,6])
         Jacob[0,0]=1.0
@@ -65,7 +65,7 @@ class Concentrations:
         max_iter=500
         tol=1e-15
         dx=np.zeros(6)
-        for i in range(self.g.num_cells):
+        for i in range(psi1.size):
             old_it=[Ca[i],H_piu[i],HCO3[i],CO2[i],CaSiO3[i],SiO2[i]]
             itera=0
             err=1
