@@ -19,18 +19,19 @@ class Flow:
         self.gb=gb
         self.domain=domain
         self.param=parameter
+        self.aperture=parameter["aperture"]
+        self.k=parameter["perm"]
+        self.k_frac=parameter["fracture_perm"]
     
     def set_data(self):
         
-        aperture=self.param["aperture"]
+        aperture=self.aperture
         fracture_perm=self.param["fracture_perm"]
         
         #fracture_perm_1=self.param["fracture_perm_1"]
         #fracture_perm_2=self.param["fracture_perm_2"]
         
-        kx=self.param["perm"]
-        tol = 1e-5
-        
+        kx=self.param["perm"]        
         
         j=0
         for g, d in self.gb:
@@ -82,6 +83,23 @@ class Flow:
                 #pp.initialize_data(mg, d, "flow", {"normal_diffusivity": kn})
             j+=1
                 
+
+    def change_perm(self,por,por_frac):
+        
+        for g,d in self.gb:
+            specific_volumes = np.power(self.aperture, self.gb.dim_max()-g.dim)
+            # Permeability
+            k = np.ones(g.num_cells) * specific_volumes#è la kx e basta per la frattura
+            if g.dim < self.gb.dim_max():
+                for i in range(k.size):
+                    k[i]=k[i]*self.k_frac*np.power(1/(d[pp.STATE]["CaSiO3"][i]*3.98e-2+1)/por_frac,3)
+            else:
+                for i in range(k.size):
+                    k[i]=k[i]*self.k*np.power(1/(d[pp.STATE]["CaSiO3"][i]*3.98e-2+1)/por,3)
+            perm = pp.SecondOrderTensor(k)
+            d[pp.PARAMETERS]["flow"]["second_order_tensor"]=perm
+        
+        
     
     def add_data(self):
         setup.add_data(self.gb, self.domain,self.param["fracture_perm"])

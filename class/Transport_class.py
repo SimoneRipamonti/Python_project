@@ -22,10 +22,11 @@ class Transport:
         #self.grid_variable=grid_variable
         self.mortar_variable=mortar_variable
         self.parameter_keyword=kw
+        self.aperture=self.param["aperture"]
         
     def set_data(self,bc_value,bc_type,keyword):
     #def set_data(self):
-        aperture_=self.param["aperture"]
+        aperture_=self.aperture
         por=self.param["por"]
         por_frac=self.param["por_frac"] 
         time_step=self.param["time_step"]
@@ -93,6 +94,20 @@ class Transport:
         else:
             bc = pp.BoundaryCondition(g) #, empty, empty)
         return bc,bc_val
+    
+    def set_porosity(self,key):
+        for g, d in self.gb:
+            porosity = np.zeros(g.num_cells)
+            if g.dim == self.gb.dim_max():#se sono nella matrice porosa
+                for i in range(g.num_cells):
+                    porosity[i]=1/(d[pp.STATE]["CaSiO3"][i]*3.98e-2+1)
+                aperture = 1
+            else:#se sono nella frattura
+                for i in range(g.num_cells):
+                    porosity[i]=1/(d[pp.STATE]["CaSiO3"][i]*3.98e-2+1)
+                aperture = np.power(self.aperture, self.gb.dim_max() - g.dim)
+            d[pp.PARAMETERS][key]["mass_weight"]=porosity*aperture
+        
     
     def discretize(self,keyword):
         mortar_variable=self.mortar_variable+keyword
@@ -172,6 +187,14 @@ class Transport:
         lhs = A[mass_term] + self.param["time_step"] * (A[advection_term] + A[advection_coupling_term])
         rhs_source_adv = b[source_term] + self.param["time_step"] * (b[advection_term] + b[advection_coupling_term])
         rhs_mass=A[mass_term]
+        
+        #print(keyword)
+        
+        #print("Advection")
+        #print(A[advection_term])
+        
+        #print("Coupling")
+        #print(A[advection_coupling_term])
         
         return lhs,rhs_source_adv,rhs_mass,assembler
     

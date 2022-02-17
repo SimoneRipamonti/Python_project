@@ -34,7 +34,7 @@ class Reaction:
     def compute_rd(self,tracer,rd):
         data=self.data
         ph=data["ph"]
-        phi=data["mass_weight"]
+        #phi=data["mass_weight"]
         K_eq=data["K_eq"]
         p=np.power(tracer,2)/(K_eq*math.pow(10,-2*ph))
         for i in range(tracer.size):

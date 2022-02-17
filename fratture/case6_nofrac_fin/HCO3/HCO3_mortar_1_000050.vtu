@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+<!--This file was created by meshio v5.0.2-->
+<UnstructuredGrid>
+<Piece NumberOfPoints="40" NumberOfCells="36">
+<Points>
+<DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary">
+AQAAAACAAADAAwAAIQEAAA==eJyrElnn/rBqij0DFPz4tRbIF9lTBRWvmzmrIszEyd5wJV/w9Nv8cPHoPpB4kP3U9INiOQfZ4OJnzj/f0ugXbe/h8wJI/94NE09qB6lPst8wZzaQfgQXP2oG0p9mn3FvJkjcGia+8BPInGz7JfdA9G+4uMA6kDvy7Q3SwPbawMQtdoDML7L/8ArsTrh4NZgusf+nC6JF4OIjxb+75FpfB+6YBxdP+QnxL0z8aSrI3DJ7hbUQ/8LEl22/8vQbe6W9DMReuPhaVpA/q+0ZYiD+hYkzh/9u5plaa79gEcS/MPFtYPfX20+4AfEvTPwJmyAQNNrfeALxL0z8wFaQv5rsfTIh/oWJ86apPJgd3my/5TXEv6j+arGfpD8y/QsAkCfILA==
+</DataArray>
+</Points>
+<Cells>
+<DataArray type="Int64" Name="connectivity" format="binary">
+AQAAAACAAABAAgAAXgAAAA==eJx1x0cSglAABFFQESUnySCZ+9+QBbPqqt+bV21ZdzZ8wCd8Scfwb+jCD/xKT/owgCGMZGz4BKYwg7ks5A+WsIK1bAzfwg72cJCj/MMJznCRq+E3uMMDnvICKzwFfQ==
+</DataArray>
+<DataArray type="Int64" Name="offsets" format="binary">
+AQAAAACAAAAgAQAAUgAAAA==eJwtxdEGgwAAAMDJJJNJkkkyM0kyk8kkk0n6/y/qobuXC06Hs0NHvjj21YlTZ859c+HSle9++OnajVt3fvnt3h8P/nr05J9n/7149eYdEH4FNQ==
+</DataArray>
+<DataArray type="Int64" Name="types" format="binary">
+AQAAAACAAAAgAQAAEAAAAA==eJxjZoAA5lEaKw0AP5AAbQ==
+</DataArray>
+</Cells>
+<CellData>
+<DataArray type="Int64" Name="grid_dim" format="binary">
+AQAAAACAAAAgAQAAEAAAAA==eJxjZIAAxlEaKw0AFfAAJQ==
+</DataArray>
+<DataArray type="Int64" Name="grid_edge_number" format="binary">
+AQAAAACAAAAgAQAADwAAAA==eJxjYBhcgHGQ0QAGeAAT
+</DataArray>
+<DataArray type="Int64" Name="is_mortar" format="binary">
+AQAAAACAAAAgAQAAEAAAAA==eJxjZIAAxlEaKw0AFfAAJQ==
+</DataArray>
+<DataArray type="Int64" Name="mortar_side" format="binary">
+AQAAAACAAAAgAQAAFwAAAA==eJxjZIAARgppJirRlLqD2u4BAB3QADc=
+</DataArray>
+<DataArray type="Int64" Name="cell_id" format="binary">
+AQAAAACAAAAgAQAASQAAAA==eJwtxUkCQgAAAECisoTKUrJk+f8fHcxcJghOoS+OHPvqm+9OnDpz7ocLl6789Mtv127cuvPHX/f+efDoybP/Xrx68+4D8/ACdw==
+</DataArray>
+</CellData>
+</Piece>
+</UnstructuredGrid>
+</VTKFile>
