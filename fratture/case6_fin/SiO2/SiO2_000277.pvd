@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+<Collection>
+	<DataSet group="" part="" file="SiO2_1_000277.vtu"/>
+	<DataSet group="" part="" file="SiO2_2_000277.vtu"/>
+	<DataSet group="" part="" file="SiO2_mortar_1_000277.vtu"/>
+</Collection>
+</VTKFile>

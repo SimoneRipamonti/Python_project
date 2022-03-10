@@ -41,7 +41,8 @@ class Flow:
             
             
             if g.dim < self.gb.dim_max():#la g è quella della frattura?
-                k *= fracture_perm
+                #k *= fracture_perm
+                k=fracture_perm*np.ones(g.num_cells) * specific_volumes
 
             #if g.dim < self.gb.dim_max():#la g è quella della frattura?
                 #if j==0:
@@ -49,6 +50,8 @@ class Flow:
                 #else:
                     #k*=fracture_perm_2
                     
+            #print("k")
+            #print(k)
             perm = pp.SecondOrderTensor(k)                   
             
             f=self.set_source(g,specific_volumes)
@@ -69,8 +72,10 @@ class Flow:
         for e, d in self.gb.edges():
             mg = d["mortar_grid"]
             kn = fracture_perm/ (aperture/2)
-            #kn=0.3
+            kn*=1e-3
             pp.initialize_data(mg, d, "flow", {"normal_diffusivity": kn})
+            print("KN")
+            print(kn)
             # Division through aperture/2 may be thought of as taking the gradient, i.e.
             # dividing by the distance from the matrix to the center of the fracture.
             
@@ -85,7 +90,7 @@ class Flow:
                 
 
     def change_perm(self,por,por_frac):
-        
+        a=0
         for g,d in self.gb:
             specific_volumes = np.power(self.aperture, self.gb.dim_max()-g.dim)
             # Permeability
@@ -93,11 +98,25 @@ class Flow:
             if g.dim < self.gb.dim_max():
                 for i in range(k.size):
                     k[i]=k[i]*self.k_frac*np.power(1/(d[pp.STATE]["CaSiO3"][i]*3.98e-2+1)/por_frac,3)
+                a=k[0]
+                print("k")
+                print(k)
             else:
                 for i in range(k.size):
                     k[i]=k[i]*self.k*np.power(1/(d[pp.STATE]["CaSiO3"][i]*3.98e-2+1)/por,3)
+                print("k")
+                print(k)
+            
             perm = pp.SecondOrderTensor(k)
             d[pp.PARAMETERS]["flow"]["second_order_tensor"]=perm
+                        
+        for e, d in self.gb.edges():
+            mg = d["mortar_grid"]
+            kn=a/(self.aperture/2)
+            pp.initialize_data(mg, d, "flow", {"normal_diffusivity": kn})
+            
+            print("KN")
+            print(kn)
         
         
     

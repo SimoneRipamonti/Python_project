@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[8]:
+# In[1]:
 
 
 import numpy as np
@@ -15,7 +15,7 @@ from Transport_class import Transport
 from Reaction_class import Reaction
 
 
-# In[1]:
+# In[2]:
 
 
 def change_por(por,por_frac,flow1,flow2,transport_Ca,transport_CaSiO3):
@@ -45,13 +45,13 @@ def change_por(por,por_frac,flow1,flow2,transport_Ca,transport_CaSiO3):
     
 
 
-# In[ ]:
+# In[3]:
 
 
 def compute_new_porosity(gb1):
     
     for g,d in gb1:
-        if g.dim < self.gb.dim_max():
+        if g.dim < gb1.dim_max():
             por_frac=1-d[pp.STATE]["CaSiO3"]*3.98e-2
         else:
             por=1-d[pp.STATE]["CaSiO3"]*3.98e-2

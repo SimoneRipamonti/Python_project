@@ -2,41 +2,41 @@
 <VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
 <!--This file was created by meshio v5.0.2-->
 <UnstructuredGrid>
-<Piece NumberOfPoints="20" NumberOfCells="18">
+<Piece NumberOfPoints="12" NumberOfCells="10">
 <Points>
 <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary">
-AQAAAACAAADgAQAAHAEAAA==eJyrElnn/rBqij0DFPz4tRbIF9lTBRWvmzmrIszEyd5wJV/w9Nv8cPHoPpB4kP3U9INiOQfZ4OJnzj/f0ugXbe/h8wJI/94NE09qB6lPst8wZzaQfgQXP2oG0p9mn3FvJkjcGia+8BPInGz7JfdA9G+4uMA6kDvy7Q3SwPbawMQtdoDML7L/8ArsTrh4NZgusf+nC6JFbHbJtb4O3DEPLp7yE+JfmPjTVJC5ZfYKayH+hYkv237l6Tf2SnsZiL1w8bWsIH9W2zPEQPwLE2cO/93MM7XWfsEiiH9h4tvA7q+3n3AD4l+Y+BM2QSBotL/xBOJfmPiBrSB/Ndn7ZEL8CxPnTVN5MDu82X7La4h/Uf3VYj9JH+JfACee5A8=
+AQAAAACAAAAgAQAArAAAAA==eJyrFlnn/rBqij0DFJT+XQvki+yphoqvaPx4yTcpwN6pMmtPyWQOuPjyapB4gr0F+ycg/WE3THy7P0hdhj2HJ0j+gzVM/NRcEL/A3q4GbI4NTBxCl9g3aoNoEZsdcq2vA3fMg4uL/IG4ByYuVgzSX2G/pxbiHpj4sQtqhhxraux/8ELcAxM/Cba3wT7DA+IemLjSTf/e6XlN9n/qIO5BtbfF/pEOxD0AndeKGA==
 </DataArray>
 </Points>
 <Cells>
 <DataArray type="Int64" Name="connectivity" format="binary">
-AQAAAACAAAAgAQAAOgAAAA==eJx1xzkOgCAABVEUkEV27n9XC381CdO8jDF/F7yhhU76wz8wwAiTzPKFBVbYZD/8gBMuuOUHhQABVw==
+AQAAAACAAACgAAAAKQAAAA==eJxjYIAARjSaCY1mRqNZ0GhWKM0GpdnRaA40mhON5kKjuaE0ABiwAG8=
 </DataArray>
 <DataArray type="Int64" Name="offsets" format="binary">
-AQAAAACAAACQAAAAMwAAAA==eJwtxdEGwCAAAMDJTGYySTJJZv//jT3s7uXC9tt9OPr05eTb2cXVzY+7h6dff15H0AFX
+AQAAAACAAABQAAAAIwAAAA==eJxjYoAAFijNBqU5oDQXlOaB0nxQWgBKC0FpESgNAA4QAG8=
 </DataArray>
 <DataArray type="Int64" Name="types" format="binary">
-AQAAAACAAACQAAAADwAAAA==eJxjZoAA5kFCAwAQmAA3
+AQAAAACAAABQAAAADgAAAA==eJxjZoAAZirRAAV4AB8=
 </DataArray>
 </Cells>
 <CellData>
 <DataArray type="Float64" Name="CaSiO3" format="binary">
-AQAAAACAAACQAAAAVwAAAA==eJyTqfe0Uf7z3j76xEwwHXHd0xpEi82YBOb3eyaC+fnnhMD82LfeJiB6V0OjJIgu2mSmpACky3O3guW/QOkJUHoDlBbOg9AdUH4ZlP4OpWdAaQA7d0lh
+AQAAAACAAABQAAAALwAAAA==eJxzL9hqo/znvf2/PAgdkAWhZbsh9JF8CL0jF0JzQNV9LYTQS6H6DaHyAJptKdk=
 </DataArray>
 <DataArray type="Int64" Name="grid_dim" format="binary">
-AQAAAACAAACQAAAADwAAAA==eJxjZIAAxkFCAwAF6AAT
+AQAAAACAAABQAAAADgAAAA==eJxjZIAARirRAAIIAAs=
 </DataArray>
 <DataArray type="Int64" Name="grid_node_number" format="binary">
-AQAAAACAAACQAAAAEQAAAA==eJxjZIAARgppJirRAAdQABw=
+AQAAAACAAABQAAAAEQAAAA==eJxjZIAARgI0E5E0AAKAABA=
 </DataArray>
 <DataArray type="Int64" Name="is_mortar" format="binary">
-AQAAAACAAACQAAAADAAAAA==eJxjYBhcAAAAkAAB
+AQAAAACAAABQAAAADAAAAA==eJxjYKAuAAAAUAAB
 </DataArray>
 <DataArray type="Int64" Name="mortar_side" format="binary">
-AQAAAACAAACQAAAADAAAAA==eJxjYBhcAAAAkAAB
+AQAAAACAAABQAAAADAAAAA==eJxjYKAuAAAAUAAB
 </DataArray>
 <DataArray type="Int64" Name="cell_id" format="binary">
-AQAAAACAAACQAAAALgAAAA==eJwtxbcBgCAAADBEBWmC/z/LYLIkhN/h6NOXbydnPy6ubu4efj29/HkDHtgAmg==
+AQAAAACAAABQAAAAIgAAAA==eJwtxbcBACAIADAsiP7/sAPJkog2PL28nT4uXz9/BXgALg==
 </DataArray>
 </CellData>
 </Piece>

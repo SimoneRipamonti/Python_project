@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+<Collection>
+	<DataSet group="" part="" file="H_piu_1_000360.vtu"/>
+	<DataSet group="" part="" file="H_piu_2_000360.vtu"/>
+	<DataSet group="" part="" file="H_piu_mortar_1_000360.vtu"/>
+</Collection>
+</VTKFile>
